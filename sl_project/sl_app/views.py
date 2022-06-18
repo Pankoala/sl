@@ -1,6 +1,7 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Tarjeta
+from .models import Tarjeta, ClienteTarjeta
 
 def index(request):
     """Vista o función que atiende la url GET /"""
@@ -21,9 +22,20 @@ def servicios(request):
 def tarjetas(request):
     """Vista o función que atiende la url GET /"""
     tarjetas_all = Tarjeta.objects.all()
-    return render(request, 'sl_app/tarjetas.html',
+    return render(request, "sl_app/tarjetas.html",
         {
             "tarjetas" : tarjetas_all
+        }
+    )
+    
+@login_required
+def portal(request):
+    """Vista o función que atiende la url GET /"""
+    user = request.user # Áqui se obtiene el usuario activo
+    tarjetas_usuario = ClienteTarjeta.objects.filter(cliente__user=user)
+    return render(request, 'sl_app/portal.html',
+        {
+            "tarjetas" : tarjetas_usuario,
         }
     )
 
@@ -44,3 +56,9 @@ def login_usuario(request):
         msg = ""
 
     return render(request, 'sl_app/login.html', {"msg": msg})
+
+def logout_usuario(request):
+    """Vista o función que atiende la url GET /logout"""
+    logout(request)
+
+    return redirect("/")

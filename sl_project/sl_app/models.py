@@ -1,10 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# Django ya cuenta con una tabla de Usuario llamada User
+# class User(models.Model):
+#     username = models.CharField(max_length=80)
+#     first_name = models.CharField(max_length=80)
+#     last_name = models.CharField(max_length=80)
+#     group = models.ForeignKey(Group)
+#     email = models.EmailField()
+
 # Create your models here.
 class Cliente(models.Model):
     """ Define la tabla Perfil """
-    nombreCliente = models.CharField(max_length=20, default="Nombre de Cliente")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     fechaNacimiento = models.DateField(null=True, blank=True)
     GENERO = [
         ("H", "Hombre"),
@@ -16,10 +24,10 @@ class Cliente(models.Model):
         ("PF", "Persona Física"),
         ("PM", "Persona Moral"),
     ]
-    tipo = models.CharField(max_length=45, choices=TIPO, null=True, blank=True)
+    tipo = models.CharField(max_length=2, choices=TIPO, null=True, blank=True)
 
     def __str__(self):
-        return self.nombreCliente
+        return self.user.username
 
 
 class Tarjeta(models.Model):
